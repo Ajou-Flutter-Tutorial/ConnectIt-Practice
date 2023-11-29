@@ -9,10 +9,6 @@ class RouteScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Firebase Authentication 인증 상태를 확인하는 로직
-    // 이미 로그인이 되어있으면 TabScreen을 보여줌
-    // 로그인이 되어있지 않으면 LoginScreen을 보여줌
-
     return StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (BuildContext context, AsyncSnapshot<User?> user) {

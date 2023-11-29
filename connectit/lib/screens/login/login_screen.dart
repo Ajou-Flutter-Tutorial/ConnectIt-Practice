@@ -4,10 +4,6 @@ import 'package:flutter/material.dart';
 import 'components/login_buttons_by_platform.dart';
 import 'components/signing_agreement_notice.dart';
 
-// 로그인이 되어 있지 않을 때 로그인 수행하는 화면
-// 서비스 이용약관 및 개인정보 처리방침 열람과 동의를 할 수 있음
-// 서비스 이용약관 및 개인정보 처리방침 동의 후 각 플랫폼의 로그인 버튼을 통해 로그인 수행
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
@@ -82,8 +78,6 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  // 서비스 이용약관 및 개인정보 처리방침 동의 버튼을 눌렀을 때 호출됨
-  // 동의 여부를 반전시켜 상태를 업데이트 함
   void _onTappedAgreementButton() {
     setState(() {
       _agreed = !_agreed;

@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'app.dart';
 import 'firebase_options.dart';
 
-// 애플리케이션의 메인 함수
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 

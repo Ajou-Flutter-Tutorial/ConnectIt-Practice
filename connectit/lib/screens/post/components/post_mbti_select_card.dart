@@ -1,0 +1,34 @@
+import 'package:flutter/material.dart';
+
+import '../../../enums/mbti.dart';
+import '../../../utils/design.dart';
+
+// 포스트 작성 시 MBTI를 선택하는 카드
+class PostMbtiSelectCard extends StatelessWidget {
+  const PostMbtiSelectCard({
+    required Function(MBTI? value) onSelected,
+    required String? initialSelection,
+    super.key,
+  }) :  _onSelected = onSelected,
+        _initialSelection = initialSelection;
+
+  final Function(MBTI? value) _onSelected;
+  final String? _initialSelection;
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+          padding: const EdgeInsets.all(defaultSpacing),
+          child: DropdownMenu<MBTI>(
+            width: MediaQuery.of(context).size.width - 72,
+            menuHeight: MediaQuery.of(context).size.height * 0.3,
+            initialSelection: _initialSelection!.isNotEmpty ? MBTI.values.firstWhere((element) => element.name == _initialSelection) : null,
+            onSelected: (MBTI? value) => _onSelected(value),
+            hintText: 'MBTI를 선택해주세요!',
+            dropdownMenuEntries: MBTI.values.map((e) => DropdownMenuEntry(value: e, label: e.name)).toList(),
+          )
+      ),
+    );
+  }
+}

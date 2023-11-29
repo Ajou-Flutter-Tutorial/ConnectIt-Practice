@@ -19,8 +19,6 @@ class SigningAgreementNotice extends StatefulWidget {
 }
 
 class _SigningAgreementNoticeState extends State<SigningAgreementNotice> {
-  // 서비스 이용약관 및 개인정보 처리 방침 동의 체크 박스와 열람을 위한 URL Launcher 제공
-
   bool _hasAgreed = false;
 
   @override
@@ -74,7 +72,6 @@ class _SigningAgreementNoticeState extends State<SigningAgreementNotice> {
     );
   }
 
-  // 서비스 이용약관 및 개인정보 처리 방침 동의 체크 박스 상태를 변경함
   void _onTappedAgreementButtonWrapper() {
     setState(() {
       _hasAgreed = !_hasAgreed;
@@ -82,7 +79,6 @@ class _SigningAgreementNoticeState extends State<SigningAgreementNotice> {
     });
   }
 
-  // URL Launcher를 이용하여 URL을 브라우저에서 열람
   Future<void> _launchInBrowser(String url) async {
     Uri uri = Uri.parse(url);
 

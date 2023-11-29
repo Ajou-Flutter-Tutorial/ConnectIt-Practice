@@ -4,9 +4,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 
-// 전체적인 사용자 인증을 관리하는 서비스
-// Singleton 패턴을 적용하여 전역에서 사용 가능하도록 함
-
 class AuthenticationService {
   static final AuthenticationService _instance = AuthenticationService._internal();
 
@@ -16,13 +13,11 @@ class AuthenticationService {
 
   AuthenticationService._internal();
 
-  // Firebase Authentication과 Google SignIn을 사용하기 위한 인스턴스 생성
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   List<SignInMethod> get signInMethods => _getCurrentLoginPlatform();
 
-  // 플랫폼에 맞추어 로그인 동작을 수행하는 메소드
   Future<UserCredential?> signIn({SignInMethod? signInMethod}) async {
     switch (signInMethod) {
       case SignInMethod.GOOGLE:
@@ -34,7 +29,6 @@ class AuthenticationService {
     }
   }
 
-  // 구글 로그인 동작을 수행하는 메소드
   Future<UserCredential?> _signInWithGoogle() async {
     try {
       UserCredential? userCredential;
@@ -64,7 +58,6 @@ class AuthenticationService {
     }
   }
 
-  // 애플 로그인 동작을 수행하는 메소드
   Future<UserCredential> _signInWithApple() async {
     try {
       final appleCredential = await SignInWithApple.getAppleIDCredential(
@@ -86,7 +79,6 @@ class AuthenticationService {
     }
   }
 
-  // 로그아웃을 수행하는 메소드
   Future<void> signOut() async {
     List<SignInMethod> signInMethods = _getCurrentLoginPlatform();
 
@@ -103,21 +95,17 @@ class AuthenticationService {
     await _firebaseAuth.signOut();
   }
 
-  // 구글 로그아웃의 경우 Google과 Firebase 모두 로그아웃 수행
   Future<void> _signOutFromGoogle() async {
     await _googleSignIn.signOut();
     await _firebaseAuth.signOut();
   }
 
-  // 애플 로그아웃의 경우 Firebase 로그아웃만 수행
   Future<void> _signOutFromApple() async {
     await _firebaseAuth.signOut();
   }
 }
 
 extension Utils on AuthenticationService {
-
-  // 로그인에 따라 플랫폼 정보를 가져오기 위한 추가 메소드
   List<SignInMethod> _getCurrentLoginPlatform() {
     User user = FirebaseAuth.instance.currentUser!;
     List<UserInfo> providerData = user.providerData;

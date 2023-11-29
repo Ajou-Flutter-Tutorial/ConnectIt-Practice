@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-// 애플리케이션 개발에 필요한 기본적인 디자인 요소들이 정의
-
 /// Spacings
 const double defaultSpacing = 16.0;
 const double defaultSpacingHalf = defaultSpacing / 2;

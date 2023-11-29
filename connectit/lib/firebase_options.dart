@@ -50,21 +50,21 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: '[YOUR API KEY]',
-    appId: '[YOUR APP ID]',
-    messagingSenderId: '[YOUR MESSAGING SENDER ID]',
-    projectId: '[YOUR PROJECT ID]',
-    storageBucket: '[YOUR STORAGE BUCKET]',
+    apiKey: 'AIzaSyA09pdRWmnxy0b9v-xgkqxLda1eLG6elKo',
+    appId: '1:305896379489:android:23f251543785a0e6db8620',
+    messagingSenderId: '305896379489',
+    projectId: 'connectit-dev',
+    storageBucket: 'connectit-dev.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: '[YOUR API KEY]',
-    appId: '[YOUR APP ID]',
-    messagingSenderId: '[YOUR MESSAGING SENDER ID]',
-    projectId: '[YOUR PROJECT ID]',
-    storageBucket: '[YOUR STORAGE BUCKET]',
-    androidClientId: '[YOUR ANDROID CLIENT ID]',
-    iosClientId: '[YOUR IOS CLIENT ID]',
-    iosBundleId: '[YOUR IOS BUNDLE ID]',
+    apiKey: 'AIzaSyA3doFFJTQIjnmussMBUxEHTB3AXv7QODg',
+    appId: '1:305896379489:ios:85ef6ef235be84d1db8620',
+    messagingSenderId: '305896379489',
+    projectId: 'connectit-dev',
+    storageBucket: 'connectit-dev.appspot.com',
+    androidClientId: '305896379489-fmr5nsoksbacj47nt07uunhltuhhv085.apps.googleusercontent.com',
+    iosClientId: '305896379489-8abnt9ehvkoa0b32treiqfu0am3b0hje.apps.googleusercontent.com',
+    iosBundleId: 'com.connectit.connectit',
   );
 }
