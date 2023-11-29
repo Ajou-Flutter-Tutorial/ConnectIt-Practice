@@ -1,4 +1,7 @@
+import 'package:connectit/providers/board_provider.dart';
+import 'package:connectit/providers/profile_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../enums/mbti.dart';
 import '../../utils/design.dart';
@@ -7,7 +10,6 @@ import '../../components/next_button.dart';
 import 'components/post_sns_ids_edit_card.dart';
 import 'components/post_text_edit_card.dart';
 
-// 포스트잇을 작성하고 수정하는 동작 수행
 class PostScreen extends StatefulWidget {
   const PostScreen({super.key});
 
@@ -16,6 +18,30 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
+  final TextEditingController _titleController = TextEditingController();
+  final TextEditingController _descriptionController = TextEditingController();
+  final TextEditingController _hobbiesController = TextEditingController();
+  final TextEditingController _topicsController = TextEditingController();
+  final TextEditingController _kakaoTalkIdController = TextEditingController();
+  final TextEditingController _instagramIdController = TextEditingController();
+  final TextEditingController _facebookIdController = TextEditingController();
+
+  String _selectedMBTI = '';
+
+  // 스크린 시작시 초기화
+  @override
+  void initState() {
+    _initField();
+    super.initState();
+  }
+
+  // 스크린 종료시 처분
+  @override
+  void dispose() {
+    _disposField();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,15 +70,15 @@ class _PostScreenState extends State<PostScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text('포스트 제목', style: DesignerTextStyle.title1),
-                    const PostTextEditCard(
-                      textEditingController: null,
+                    PostTextEditCard(
+                      textEditingController: _titleController,
                       hintText: '간단히 나를 표현해주세요!',
                       maxLength: 32,
                     ),
                     const SizedBox(height: defaultDoubleSpacing),
                     Text('포스트 내용', style: DesignerTextStyle.title1),
-                    const PostTextEditCard(
-                      textEditingController: null,
+                    PostTextEditCard(
+                      textEditingController: _descriptionController,
                       hintText: '자유롭게 나를 표현해주세요!',
                       maxLength: 256,
                       maxLines: 5,
@@ -60,31 +86,31 @@ class _PostScreenState extends State<PostScreen> {
                     const SizedBox(height: defaultDoubleSpacing),
                     Text('나의 MBTI', style: DesignerTextStyle.title1),
                     PostMbtiSelectCard(
-                      onSelected: (_) {},
-                      initialSelection: 'ENFP',
+                      onSelected: (MBTI? value) => _onSelectedMbti(value),
+                      initialSelection: _selectedMBTI,
                     ),
                     const SizedBox(height: defaultDoubleSpacing),
                     Text('나의 취미', style: DesignerTextStyle.title1),
-                    const PostTextEditCard(
-                      textEditingController: null,
+                    PostTextEditCard(
+                      textEditingController: _hobbiesController,
                       hintText: '취미를 쉼표(,)로 구분하여 적어주세요!',
                       maxLength: 128,
                       maxLines: 3,
                     ),
                     const SizedBox(height: defaultDoubleSpacing),
                     Text('나의 관심사', style: DesignerTextStyle.title1),
-                    const PostTextEditCard(
-                      textEditingController: null,
+                    PostTextEditCard(
+                      textEditingController: _topicsController,
                       hintText: '관심사를 쉼표(,)로 구분하여 적어주세요!',
                       maxLength: 128,
                       maxLines: 3,
                     ),
                     const SizedBox(height: defaultDoubleSpacing),
                     Text('나의 SNS ID', style: DesignerTextStyle.title1),
-                    const PostSnsIdsEditCard(
-                      kakaoTalkIdController: null,
-                      instagramIdController: null,
-                      facebookIdController: null,
+                    PostSnsIdsEditCard(
+                      kakaoTalkIdController: _kakaoTalkIdController,
+                      instagramIdController: _instagramIdController,
+                      facebookIdController: _facebookIdController,
                     ),
                   ],
                 ),
@@ -101,6 +127,47 @@ class _PostScreenState extends State<PostScreen> {
         ],
       ),
     );
+  }
+
+  // 스크린 시작시 컨트롤러 초기화하는 메소드
+  void _initField() {
+    // 스크린이 그려진 후에 컨트롤러에 값 적용, 에러 방지 코드
+    WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+      ProfileProvider profileProvider = context.read<ProfileProvider>();
+
+      _titleController.text = profileProvider.postIt?.title ?? '';
+      _descriptionController.text = profileProvider.postIt?.description ?? '';
+      _hobbiesController.text = profileProvider.postIt?.hobbies.join(', ') ?? '';
+      _topicsController.text = profileProvider.postIt?.topics.join(', ') ?? '';
+
+      setState(() {
+        _selectedMBTI = profileProvider.postIt?.mbti ?? '';
+      });
+
+      if (profileProvider.postIt?.snsIds != null) {
+        _kakaoTalkIdController.text = profileProvider.postIt?.snsIds?.kakaotalk ?? '';
+        _instagramIdController.text = profileProvider.postIt?.snsIds?.instagram ?? '';
+        _facebookIdController.text = profileProvider.postIt?.snsIds?.facebook ?? '';
+      }
+    });
+  }
+
+  // 스크린 종료시 컨트롤러 처분하는 메소드
+  void _disposField() {
+    _titleController.dispose();
+    _descriptionController.dispose();
+    _hobbiesController.dispose();
+    _topicsController.dispose();
+    _kakaoTalkIdController.dispose();
+    _instagramIdController.dispose();
+    _facebookIdController.dispose();
+  }
+
+  // MBTI 선택시 호출되는 메소드
+  void _onSelectedMbti(MBTI? value) {
+    setState(() {
+      _selectedMBTI = value!.name;
+    });
   }
 
   Future<void> _onPressedSave() async {}

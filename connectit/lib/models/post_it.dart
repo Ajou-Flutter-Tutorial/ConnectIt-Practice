@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 import '../models/sns_ids.dart';
 
+// 포스트잇 정보를 저장하는 데이터 모델
 class PostIt {
   String? uid;
   String? title;
@@ -12,6 +13,7 @@ class PostIt {
   List<String>? keywords;
   SnsIds? snsIds;
 
+  // 포스트잇 정보를 초기화하는 생성자
   PostIt.initialize({
     required this.uid,
     required this.title,
@@ -22,6 +24,8 @@ class PostIt {
     required this.snsIds,
   }) : keywords = [mbti!] + hobbies! + topics!;
 
+  // Firestore Doc에서 데이터를 읽어와 PostIt 인스턴스를 생성하는 생성자
+  // Board에서 데이터를 읽어올 때 사용
   PostIt.fromFirestoreDoc({
     required DocumentSnapshot<Map<String, dynamic>> snapshot,
     SnapshotOptions? options,
@@ -41,6 +45,8 @@ class PostIt {
     );
   }
 
+  // Firestore 데이터를 읽어와 PostIt 인스턴스를 생성하는 생성자
+  // Storage에 저장된 데이터를 읽어올 때 사용
   PostIt.fromFirestoreData({
     required Map<String, dynamic>? data,
   }) {
@@ -56,6 +62,7 @@ class PostIt {
     );
   }
 
+  // Firestore에 데이터를 쓰기 위해 PostIt 인스턴스를 Map으로 변환하는 메서드
   Map<String, dynamic> toFirestore() {
     return {
       'uid': uid ?? '',
