@@ -170,5 +170,37 @@ class _PostScreenState extends State<PostScreen> {
     });
   }
 
-  Future<void> _onPressedSave() async {}
+  // PostIt 정보를 저장하는 메소드
+  // Screen과 Provider를 연결하여 데이터를 DB에 저장
+  Future<void> _onPressedSave() async {
+    ProfileProvider profileProvider = context.read<ProfileProvider>();
+    BoardProvider boardProvider = context.read<BoardProvider>();
+
+    if (_kakaoTalkIdController.text.isNotEmpty || _facebookIdController.text.isNotEmpty || _instagramIdController.text.isNotEmpty) {
+      profileProvider.setPostIt(
+        title: _titleController.text,
+        description: _descriptionController.text,
+        mbti: _selectedMBTI,
+        hobbies: _hobbiesController.text,
+        topics: _topicsController.text,
+        kakaotalkId: _kakaoTalkIdController.text,
+        instagramId: _instagramIdController.text,
+        facebookId: _facebookIdController.text,
+      ).then((_) {
+        boardProvider.updatePostIt(postIt: profileProvider.postIt!).then((_) {
+          Navigator.pop(context);
+        });
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          duration: Duration(seconds: 2),
+          content: Text(
+            'SNS ID를 하나 이상 입력해주세요.',
+            textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+  }
 }
