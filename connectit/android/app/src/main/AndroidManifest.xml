@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Android Native 권한 설정 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:label="connectit"
         android:name="${applicationName}"
