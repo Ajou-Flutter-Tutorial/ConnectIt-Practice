@@ -1,0 +1,90 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# Fastlane for iOS
+# Step 1. Update version code and version number.
+# Step 2. Run commend `flutter build ios`.
+# Step 3. Run commend `fastlane upload_testflight`
+# Step 4. Check the application in the Apple Appstore Connect.
+
+default_platform(:ios)
+
+platform :ios do
+    desc "Upload a new build to the TestFlight"
+  lane :upload_testflight do
+    begin
+      sh "flutter build ios"
+      build_app(
+        workspace: "Runner.xcworkspace",
+        scheme: "Runner",
+        output_directory: "./output",
+        output_name: "Runner",
+      )
+      upload_to_testflight(
+        app_identifier: "com.connectit.connectit",
+        ipa: "./output/Runner.ipa",
+        skip_waiting_for_build_processing: true,
+      )
+      upload_ios_success(get_ios_version_name())
+    rescue => exception
+      upload_ios_failure(exception)
+    end
+  end
+
+  def get_ios_version_name()
+    pubspec = YAML.load_file("../../pubspec.yaml")
+    version_number = pubspec["version"].split("+")[0]
+    version_code = pubspec["version"].split("+")[1]
+
+    return version_code + " (" + version_number + ")"
+  end
+
+  def upload_ios_success(version_name)
+    slack(
+      slack_url: "[YOUR_SLACK_WEBHOOK_URL]",
+      message: "Upload a new build to the TestFlight",
+      channel: "#fastlane",
+      success: true,
+      default_payloads: [:git_branch, :git_author],
+      attachment_properties: {
+        fields: [
+          {
+            title: "Version Name",
+            value: version_name,
+            short: true,
+          },
+        ],
+      },
+    )
+  end
+
+  def upload_ios_failure(exception)
+    slack(
+      slack_url: "[YOUR_SLACK_WEBHOOK_URL]",
+      message: "Upload iOS error occurred!",
+      channel: "#fastlane",
+      success: false,
+      default_payloads: [:git_branch, :git_author],
+      attachment_properties: {
+        fields: [
+          {
+            title: "iOS Upload Failed",
+            value: exception,
+          },
+        ],
+      },
+    )
+  end
+end

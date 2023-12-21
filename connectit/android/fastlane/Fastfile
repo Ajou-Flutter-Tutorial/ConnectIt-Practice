@@ -1,0 +1,98 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# Fastlane for Android
+# Step 1. Update version code and version number.
+# Step 2. Run commend `flutter build appbundle`.
+# Step 3. Run commend `fastlane upload_internal`
+# Step 4. Check the application in the Google Play Console.
+
+default_platform(:android)
+
+platform :android do
+  desc "Upload a new version to the Google Play"
+  lane :upload_internal do
+    begin
+      version_name = get_android_version_name()
+
+      sh "flutter build appbundle"
+      gradle(
+        task: "bundle", build_type: "Release",
+        flags: "-Ptarget=lib/main.dart",
+      )
+      upload_to_play_store(
+        package_name: "com.connectit.connectit",
+        version_name: version_name,
+        aab: "../../connectit/build/app/outputs/bundle/release/app-release.aab",
+        skip_upload_metadata: true,
+        skip_upload_changelogs: true,
+        skip_upload_screenshots: true,
+        skip_upload_images: true,
+        skip_upload_apk: true,
+        release_status: "draft",
+        track: "internal",
+      )
+
+      upload_android_success(version_name)
+    rescue => exception
+      upload_android_failure(exception)
+    end
+  end
+
+  def get_android_version_name()
+    pubspec = YAML.load_file("../../pubspec.yaml")
+    version_number = pubspec["version"].split("+")[0]
+    version_code = pubspec["version"].split("+")[1]
+
+    return version_code + " (" + version_number + ")"
+  end
+
+  def upload_android_success(version_name)
+    slack(
+      slack_url: "[YOUR_SLACK_WEBHOOK_URL]",
+      message: "Upload a new version to the Google Play",
+      channel: "#fastlane",
+      success: true,
+      default_payloads: [:git_branch, :git_author],
+      attachment_properties: {
+        fields: [
+          {
+            title: "Version Name",
+            value: version_name,
+            short: true,
+          },
+        ],
+      },
+    )
+  end
+
+  def upload_android_failure(exception)
+    slack(
+      slack_url: "[YOUR_SLACK_WEBHOOK_URL]",
+      message: "Upload Android error occurred!",
+      channel: "#fastlane",
+      success: false,
+      default_payloads: [:git_branch, :git_author],
+      attachment_properties: {
+        fields: [
+          {
+            title: "Android Upload Failed",
+            value: exception,
+          },
+        ],
+      },
+    )
+  end
+end
